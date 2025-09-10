@@ -1,30 +1,51 @@
-## Tools — p5.js Sketch
+## Tools — Graphics Tools and Templates
 
-This repo will host custom graphics tools. For now, it contains a minimal p5.js sketch you can run locally.
+This repo hosts custom graphics tools and a starter template for making new ones with p5.js, Tweakpane (UI), and SVG export.
 
 ### Run locally
 
-Because browsers block some local file access, serve the folder with a simple static server and open the URL in your browser.
+Serve the folder with a simple static server and open the URL in your browser:
 
-- Using Python (built-in on most systems):
+- Python (built-in):
   - `python3 -m http.server 5500`
-  - Open `http://localhost:5500` and click `index.html`
+  - Open `http://localhost:5500/index.html` (or a specific tool’s `index.html`)
 
-- Using Node (if you prefer):
+- Node (optional):
   - `npx serve .` (or `pnpm dlx serve .`)
-  - Open the printed local URL
+  - Open the printed URL
 
 - VS Code extension:
-  - Install "Live Server" and choose "Open with Live Server" on `index.html`
+  - Install "Live Server" and choose "Open with Live Server" on an `index.html`
 
-### Files
+### Create a new tool (recommended)
 
-- `index.html` — loads p5.js from CDN and `sketch.js`
-- `sketch.js` — simple animated orbs that follow the mouse; click to change palette
+Use the built-in template (p5 + Tweakpane + SVG export):
 
-### Next ideas
+1) Run the scaffold script
 
-- Add UI toggles for parameters (speed, count, palettes)
-- Export frames or capture GIFs
-- Create separate folders for each tool/sketch
+```
+scripts/new-tool.sh "My First Tool" my-first-tool
+```
+
+If you omit the slug, it will be derived from the title.
+
+2) Start a server and open the new tool
+
+```
+python3 -m http.server 5500
+# then open http://localhost:5500/tools/my-first-tool/index.html
+```
+
+3) Edit `tools/my-first-tool/sketch.js` — put your drawing in `drawArtwork(g)` so both canvas and SVG exports work.
+
+### Template location
+
+- `templates/p5-tweakpane-svg/` — HTML + JS scaffold with:
+  - p5.js for drawing, instance mode
+  - Tweakpane for UI controls
+  - p5.js-svg for SVG export (vector)
+
+### Minimal example at root
+
+- `index.html` and `sketch.js` — a very simple p5 sketch for quick testing.
 
