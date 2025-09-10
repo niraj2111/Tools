@@ -4,9 +4,9 @@
 (function () {
   const PARAMS = {
     // Canvas
-    width: 500,
-    height: 800,
-    bg: '#0f1226',
+    width: 400,
+    height: 600,
+    bg: '#ffffff',
     // Cloth params
     cols: 30,
     rows: 30,
@@ -33,35 +33,35 @@
   // UI
   const pane = new Tweakpane.Pane({ container: document.getElementById('pane') });
   const fCanvas = pane.addFolder({ title: 'Canvas', expanded: false });
-  fCanvas.addBinding(PARAMS, 'width', { min: 240, max: 1920, step: 1 });
-  fCanvas.addBinding(PARAMS, 'height', { min: 240, max: 1920, step: 1 });
-  fCanvas.addBinding(PARAMS, 'bg');
+  const bindWidth = fCanvas.addInput(PARAMS, 'width', { min: 240, max: 1920, step: 1 });
+  const bindHeight = fCanvas.addInput(PARAMS, 'height', { min: 240, max: 1920, step: 1 });
+  fCanvas.addInput(PARAMS, 'bg');
 
   const fCloth = pane.addFolder({ title: 'Cloth', expanded: true });
-  fCloth.addBinding(PARAMS, 'cols', { min: 2, max: 200, step: 1 });
-  fCloth.addBinding(PARAMS, 'rows', { min: 2, max: 200, step: 1 });
-  fCloth.addBinding(PARAMS, 'spacing', { min: 2, max: 40, step: 1 });
-  fCloth.addBinding(PARAMS, 'gravity', { min: 0, max: 2, step: 0.01 });
-  fCloth.addBinding(PARAMS, 'iterations', { min: 1, max: 20, step: 1 });
-  fCloth.addBinding(PARAMS, 'damping', { min: 0.9, max: 1, step: 0.0005 });
-  fCloth.addBinding(PARAMS, 'stiffness', { min: 0, max: 1, step: 0.01 });
+  const bindCols = fCloth.addInput(PARAMS, 'cols', { min: 2, max: 200, step: 1 });
+  const bindRows = fCloth.addInput(PARAMS, 'rows', { min: 2, max: 200, step: 1 });
+  const bindSpacing = fCloth.addInput(PARAMS, 'spacing', { min: 2, max: 40, step: 1 });
+  fCloth.addInput(PARAMS, 'gravity', { min: 0, max: 2, step: 0.01 });
+  fCloth.addInput(PARAMS, 'iterations', { min: 1, max: 20, step: 1 });
+  fCloth.addInput(PARAMS, 'damping', { min: 0.9, max: 1, step: 0.0005 });
+  fCloth.addInput(PARAMS, 'stiffness', { min: 0, max: 1, step: 0.01 });
   fCloth.addButton({ title: 'Reset Cloth' }).on('click', () => resetCloth());
 
   const fRender = pane.addFolder({ title: 'Render', expanded: false });
-  fRender.addBinding(PARAMS, 'showLines');
-  fRender.addBinding(PARAMS, 'showPoints');
-  fRender.addBinding(PARAMS, 'lineColor');
-  fRender.addBinding(PARAMS, 'pointColor');
-  fRender.addBinding(PARAMS, 'lineWeight', { min: 0.5, max: 5, step: 0.5 });
-  fRender.addBinding(PARAMS, 'pointSize', { min: 1, max: 10, step: 1 });
+  fRender.addInput(PARAMS, 'showLines');
+  fRender.addInput(PARAMS, 'showPoints');
+  fRender.addInput(PARAMS, 'lineColor');
+  fRender.addInput(PARAMS, 'pointColor');
+  fRender.addInput(PARAMS, 'lineWeight', { min: 0.5, max: 5, step: 0.5 });
+  fRender.addInput(PARAMS, 'pointSize', { min: 1, max: 10, step: 1 });
 
   const fInteract = pane.addFolder({ title: 'Interaction', expanded: false });
-  fInteract.addBinding(PARAMS, 'dragRadius', { min: 1, max: 40, step: 1 });
-  fInteract.addBinding(PARAMS, 'tearRadius', { min: 1, max: 40, step: 1 });
-  fInteract.addBinding(PARAMS, 'tearMode', { label: 'Tear while dragging' });
+  fInteract.addInput(PARAMS, 'dragRadius', { min: 1, max: 40, step: 1 });
+  fInteract.addInput(PARAMS, 'tearRadius', { min: 1, max: 40, step: 1 });
+  fInteract.addInput(PARAMS, 'tearMode', { label: 'Tear while dragging' });
 
   const fExport = pane.addFolder({ title: 'Export', expanded: false });
-  fExport.addBinding(PARAMS, 'pngScale', { min: 1, max: 4, step: 1, label: 'PNG scale' });
+  fExport.addInput(PARAMS, 'pngScale', { min: 1, max: 4, step: 1, label: 'PNG scale' });
 
   const btnSVG = document.getElementById('btn-export-svg');
   const btnPNG = document.getElementById('btn-export-png');
@@ -201,21 +201,16 @@
     };
   });
 
-  // Resize canvas if canvas size params change
-  pane.on('change', (ev) => {
-    const k = ev?.target?.key ?? ev?.presetKey;
-    if (k === 'width' || k === 'height') {
-      app.resizeCanvas(PARAMS.width, PARAMS.height);
-      resetCloth();
-    }
-    if (['cols','rows','spacing'].includes(k)) {
-      resetCloth();
-    }
-  });
+  // React to parameter changes explicitly
+  bindWidth.on('change', () => { app.resizeCanvas(PARAMS.width, PARAMS.height); resetCloth(); });
+  bindHeight.on('change', () => { app.resizeCanvas(PARAMS.width, PARAMS.height); resetCloth(); });
+  bindCols.on('change', resetCloth);
+  bindRows.on('change', resetCloth);
+  bindSpacing.on('change', resetCloth);
 
   // Exports
   function exportSVGOnce() {
-    const svg = app.createGraphics(PARAMS.width, PARAMS.height, SVG);
+    const svg = app.createGraphics(PARAMS.width, PARAMS.height, 'svg');
     drawCloth(svg);
     app.save(svg, `cloth-simulation-${Date.now()}.svg`);
     svg.remove();
@@ -242,4 +237,3 @@
     off.remove();
   });
 })();
-

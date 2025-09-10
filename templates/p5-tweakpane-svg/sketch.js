@@ -18,16 +18,16 @@
 
   // UI
   const pane = new Tweakpane.Pane({ container: document.getElementById('pane') });
-  pane.addBinding(PARAMS, 'width', { min: 240, max: 1920, step: 10 });
-  pane.addBinding(PARAMS, 'height', { min: 240, max: 1920, step: 10 });
-  pane.addBinding(PARAMS, 'bg');
-  pane.addBinding(PARAMS, 'stroke');
-  pane.addBinding(PARAMS, 'fill');
-  pane.addBinding(PARAMS, 'filled');
-  pane.addBinding(PARAMS, 'count', { min: 1, max: 1000, step: 1 });
-  pane.addBinding(PARAMS, 'speed', { min: 0, max: 5, step: 0.01 });
-  pane.addBinding(PARAMS, 'thickness', { min: 0.2, max: 10, step: 0.1 });
-  pane.addBinding(PARAMS, 'pngScale', { min: 1, max: 4, step: 1, label: 'PNG scale' });
+  pane.addInput(PARAMS, 'width', { min: 240, max: 1920, step: 10 });
+  pane.addInput(PARAMS, 'height', { min: 240, max: 1920, step: 10 });
+  pane.addInput(PARAMS, 'bg');
+  pane.addInput(PARAMS, 'stroke');
+  pane.addInput(PARAMS, 'fill');
+  pane.addInput(PARAMS, 'filled');
+  pane.addInput(PARAMS, 'count', { min: 1, max: 1000, step: 1 });
+  pane.addInput(PARAMS, 'speed', { min: 0, max: 5, step: 0.01 });
+  pane.addInput(PARAMS, 'thickness', { min: 0.2, max: 10, step: 0.1 });
+  pane.addInput(PARAMS, 'pngScale', { min: 1, max: 4, step: 1, label: 'PNG scale' });
 
   const btnSVG = document.getElementById('btn-export-svg');
   const btnPNG = document.getElementById('btn-export-png');
@@ -83,7 +83,7 @@
 
   // Recreate canvas on dimension change
   pane.on('change', (ev) => {
-    if (ev.presetKey === 'width' || ev.presetKey === 'height' || ev.target?.key === 'width' || ev.target?.key === 'height') {
+    if (ev.target?.key === 'width' || ev.target?.key === 'height') {
       app.resizeCanvas(PARAMS.width, PARAMS.height);
     }
   });
@@ -91,7 +91,7 @@
   // Exports
   btnSVG.addEventListener('click', () => {
     // Create an offscreen SVG graphics, draw once, and save.
-    const svg = app.createGraphics(PARAMS.width, PARAMS.height, SVG);
+    const svg = app.createGraphics(PARAMS.width, PARAMS.height, 'svg');
     drawArtwork(svg);
     // Save as vector
     app.save(svg, `${'__TOOL_SLUG__'}-${Date.now()}.svg`);
@@ -119,4 +119,3 @@
     off.remove();
   });
 })();
-
